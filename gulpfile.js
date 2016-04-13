@@ -16,7 +16,7 @@ var buffer = require('vinyl-buffer'); //converts streaming vinyl files to use bu
 var rootPath = process.cwd();
 var cssPath = rootPath + '/css/';
 var jsPath =  rootPath + '/js/';
-var destPath = rootPath + '/dist/';
+var destPath = rootPath;
 
 
 // Gulp Tasks
