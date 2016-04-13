@@ -36,7 +36,6 @@
     "transform": [ "browserify-shim" ]
   },
   "browserify-shim": {
-    "jquery": "$",
-    "mapbox-gl": "global:mapbox-gl"
+    "mapbox-gl": "global:mapboxgl"
   }
 }

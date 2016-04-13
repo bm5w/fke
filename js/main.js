@@ -1,4 +1,4 @@
-var mapgl = require('mapbox-gl');
+var mapboxgl = require('mapbox-gl');
 
 mapboxgl.accessToken = 'pk.eyJ1IjoibWFya2tvbmciLCJhIjoiY2lteWNjMzFhMDQzbXZvbHUza3B6eTdoaSJ9.HuonodjO41vjRpMJk29lXA';
 var map = new mapboxgl.Map({
