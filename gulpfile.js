@@ -1,20 +1,22 @@
 // Requirements
 // ============================================================================
-/ Include gulp
+// Include gulp
 var gulp = require('gulp');
 // Include Our Plugins
 var jshint = require('gulp-jshint');
-var sass = require('gulp-sass');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
 var rename = require('gulp-rename');
-
+var browserify = require('browserify');
+var source = require('vinyl-source-stream'); // converts browserify bundle into appropriate stream for gulp
+var buffer = require('vinyl-buffer'); //converts streaming vinyl files to use buffers
 
 // Paths
 // ============================================================================
-// var rootPath = process.cwd() + '/app/app/static/';
-// var cssPath = rootPath + '/css/';
-// var jsPath =  rootPath + '/js/';
+var rootPath = process.cwd();
+var cssPath = rootPath + '/css/';
+var jsPath =  rootPath + '/js/';
+var destPath = rootPath + '/dist/';
 
 
 // Gulp Tasks
@@ -26,28 +28,31 @@ gulp.task('lint', function() {
         .pipe(jshint.reporter('default'));
 });
 
-// Compile Our Sass
-gulp.task('sass', function() {
-    return gulp.src('scss/*.scss')
-        .pipe(sass())
-        .pipe(gulp.dest('dist/css'));
+// Concatenate and browserify JS sourcefiles.
+gulp.task('js', function() {
+  return  browserify(jsPath + 'main.js')
+    .bundle()
+    .pipe(source('bundle.js'))
+    .pipe(gulp.dest(destPath));
 });
 
-// Concatenate & Minify JS
-gulp.task('scripts', function() {
-    return gulp.src('js/*.js')
-        .pipe(concat('all.js'))
-        .pipe(gulp.dest('dist'))
-        .pipe(rename('all.min.js'))
+// Concatenate, browserify, and minify JS sourcefiles.
+// only perform when going to prod
+gulp.task('minify:js', ['js'], function() {
+    return browserify(jsPath + 'main.js')
+        .bundle()
+        .pipe(source('bundle.js'))
+        .pipe(buffer())
         .pipe(uglify())
-        .pipe(gulp.dest('dist/js'));
+        .pipe(gulp.dest(destPath));
 });
 
 // Watch Files For Changes
 gulp.task('watch', function() {
-    gulp.watch('js/*.js', ['lint', 'scripts']);
-    gulp.watch('scss/*.scss', ['sass']);
+    gulp.watch('js/*.js', ['lint', 'js']);
 });
 
 // Default Task
-gulp.task('default', ['lint', 'sass', 'scripts', 'watch']);
+gulp.task('default', ['lint', 'js', 'watch']);
+// run this task for minify before releasing to prod
+gulp.task('production', ['lint', 'minify:js', 'watch']);
